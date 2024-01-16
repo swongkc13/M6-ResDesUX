@@ -1,6 +1,7 @@
 import cv2
 from cvzone.HandTrackingModule import HandDetector
 import time
+import subprocess
 
 cap = cv2.VideoCapture(0)
 detector = HandDetector(detectionCon=0.8, maxHands=2)
@@ -14,8 +15,11 @@ while True:
         print("Hand detected")
 
     elapsed_time = time.time() - start_time
-    if elapsed_time >= 3:
+    if elapsed_time >= 5:
         print("Camera Activated")
+
+        # Open the website using Chrome
+        subprocess.run(["open", "-a", "Google Chrome", "https://www.politie.nl/"])
         break
 
     cv2.imshow("Image", img)
