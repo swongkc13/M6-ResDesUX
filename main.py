@@ -5,7 +5,7 @@ import subprocess
 
 cap = cv2.VideoCapture(0)
 detector = HandDetector(detectionCon=0.8, maxHands=2)
-start_time = time.time()
+start_time = None  # Initialize start_time as None
 
 while True:
     success, img = cap.read()
@@ -14,13 +14,24 @@ while True:
     if hands:
         print("Hand detected")
 
-    elapsed_time = time.time() - start_time
-    if elapsed_time >= 5:
-        print("Camera Activated")
+        if start_time is None:
+            start_time = time.time()
 
-        # Open the website using Chrome
-        subprocess.run(["open", "-a", "Google Chrome", "https://www.politie.nl/"])
-        break
+    if start_time is not None:
+        elapsed_time = time.time() - start_time
+        if elapsed_time >= 5:
+            print("Camera Activated")
+
+            # Open the Zoom application
+            subprocess.run(["open", "-a", "zoom.us"])
+            break
+
+    # Make the window fullscreen
+    cv2.namedWindow("Image", cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("Image", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+    # Add "Welcome" text centered at the top
+    cv2.putText(img, "Welcome", (img.shape[1] // 2 - 80, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
     cv2.imshow("Image", img)
     cv2.waitKey(1)
