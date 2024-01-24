@@ -2,6 +2,7 @@ import cv2
 from cvzone.HandTrackingModule import HandDetector
 import time
 import subprocess
+import platform  # Import the platform module
 
 cap = cv2.VideoCapture(0)
 detector = HandDetector(detectionCon=0.8, maxHands=2)
@@ -9,7 +10,7 @@ start_time = None  # Initialize start_time as None
 
 while True:
     success, img = cap.read()
-    hands, img = detector.findHands(img, flipType=False)
+    hands, img = detector.findHands(img, flipType=True)
 
     if hands:
         print("Hand detected")
@@ -23,7 +24,10 @@ while True:
             print("Camera Activated")
 
             # Open the Zoom application
-            subprocess.run(["open", "-a", "zoom.us"])
+            if platform.system() == "Darwin":
+                subprocess.run(["open", "-a", "zoom.us"])
+            elif platform.system() == "Windows":
+                subprocess.run(["start", "zoom.us"])
             break
 
     # Make the window fullscreen
