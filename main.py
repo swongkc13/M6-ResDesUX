@@ -30,11 +30,20 @@ while True:
     cv2.namedWindow("Image", cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty("Image", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-    # Add "Welcome" text centered at the top
-    cv2.putText(img, "Welcome", (img.shape[1] // 2 - 80, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    # Add larger "Welcome" text centered at the top
+    text = "Welcome to VigilanTv"
+    text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 2, 3)[0]
+    text_x = (img.shape[1] - text_size[0]) // 2
+    cv2.putText(img, text, (text_x, 100),
+                cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3, cv2.LINE_AA)
 
+    # Display video feed
     cv2.imshow("Image", img)
-    cv2.waitKey(1)
+
+    # Check for key press to interrupt video capture
+    key = cv2.waitKey(1)
+    if key == ord('q'):
+        break
 
 cap.release()
 cv2.destroyAllWindows()
