@@ -27,7 +27,7 @@ while True:
             if platform.system() == "Darwin":
                 subprocess.run(["open", "-a", "zoom.us"])
             elif platform.system() == "Windows":
-                subprocess.run(["start", "zoom.us"])
+                subprocess.Popen("start zoom.us", shell=True)
             break
 
     # Make the window fullscreen
