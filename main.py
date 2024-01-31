@@ -3,18 +3,6 @@ from cvzone.HandTrackingModule import HandDetector
 import time
 import subprocess
 import platform
-import pygetwindow as gw  # Import the pygetwindow module
-
-# Check if Zoom is already open
-zoom_window = gw.getWindowsWithTitle("Zoom")
-
-if not zoom_window:
-    # Open Zoom if it's not already open
-    if platform.system() == "Darwin":
-        subprocess.run(["open", "-a", "zoom.us"])
-    elif platform.system() == "Windows":
-        subprocess.Popen("start zoom.us", shell=True)
-    time.sleep(2)  # Wait for Zoom to open
 
 cap = cv2.VideoCapture(0)
 detector = HandDetector(detectionCon=0.8, maxHands=2)
@@ -24,6 +12,10 @@ while True:
     success, img = cap.read()
     hands, img = detector.findHands(img, flipType=True)
 
+    # Apply a very strong blur effect until a hand is detected
+    if not hands:
+        img = cv2.GaussianBlur(img, (95, 95), 0)  # Adjust the kernel size for a very strong blur
+
     if hands:
         print("Hand detected")
 
@@ -32,8 +24,15 @@ while True:
 
     if start_time is not None:
         elapsed_time = time.time() - start_time
-        if elapsed_time >= 5:
+        if elapsed_time >= 3:  # Reduce the time to 3 seconds
             print("Camera Activated")
+
+            # Open the Zoom application
+            if platform.system() == "Darwin":
+                subprocess.run(["open", "-a", "zoom.us"])
+            elif platform.system() == "Windows":
+                subprocess.Popen("start zoom.us", shell=True)
+            break
 
     # Make the window fullscreen
     cv2.namedWindow("Image", cv2.WND_PROP_FULLSCREEN)
