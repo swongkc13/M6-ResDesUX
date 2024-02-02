@@ -3,6 +3,7 @@ from cvzone.HandTrackingModule import HandDetector
 import time
 import subprocess
 import platform
+import pyautogui
 
 class CallInitiator:
     def __init__(self):
@@ -11,9 +12,6 @@ class CallInitiator:
         self.start_time = None
 
     def run(self):
-        """
-        The main method that runs the detection loop.
-        """
         while True:
             success, img = self.cap.read()
             hands, img = self.detector.findHands(img, flipType=True)
@@ -32,9 +30,6 @@ class CallInitiator:
         self.releaseResources()
 
     def handleHandDetection(self):
-        """
-        Handles the logic when a hand is detected.
-        """
         print("Hand detected")
         if self.start_time is None:
             self.start_time = time.time()
@@ -46,19 +41,17 @@ class CallInitiator:
                 self.launchCall()
 
     def launchCall(self):
-        """
-        Launches the call application based on the platform.
-        """
         if platform.system() == "Darwin":
             subprocess.run(["open", "-a", "zoom.us"])
         elif platform.system() == "Windows":
             subprocess.Popen("start zoom.us", shell=True)
+            # Wait for Zoom window to open
+            time.sleep(3)
+            # Maximize and focus on the Zoom window using pyautogui
+            pyautogui.hotkey('winleft', 'up')  # Maximize window
         exit()
 
     def showImage(self, img):
-        """
-        Displays the image with text.
-        """
         cv2.namedWindow("Image", cv2.WND_PROP_FULLSCREEN)
         cv2.setWindowProperty("Image", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
@@ -71,9 +64,6 @@ class CallInitiator:
         cv2.imshow("Image", img)
 
     def releaseResources(self):
-        """
-        Releases the resources (camera and windows).
-        """
         self.cap.release()
         cv2.destroyAllWindows()
 
